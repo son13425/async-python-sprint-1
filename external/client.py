@@ -2,6 +2,8 @@ import json
 import logging
 from http import HTTPStatus
 from urllib.request import urlopen
+from utils import get_key
+
 
 ERR_MESSAGE_TEMPLATE = "Unexpected error: {error}"
 
@@ -16,20 +18,25 @@ class YandexWeatherAPI:
 
     def __do_req(url: str) -> str:
         """Base request method"""
+        city = get_key(url)
         try:
             with urlopen(url) as response:
-                resp_body = response.read().decode("utf-8")
-                data = json.loads(resp_body)
-            if response.status != HTTPStatus.OK:
-                raise Exception(
-                    "Error during execute request. {}: {}".format(
-                        resp_body.status, resp_body.reason
-                    )
-                )
-            return data
-        except Exception as ex:
-            logger.error(ex)
-            raise Exception(ERR_MESSAGE_TEMPLATE.format(error=ex))
+                if response.status == HTTPStatus.OK:
+                    resp_body = response.read().decode("utf-8")
+                    if resp_body:
+                        try:
+                            data = json.loads(resp_body)
+                            return data
+                        except Exception:
+                            logging.error(
+                                'Некорректные данные для города: %s',
+                                city
+                            )
+        except Exception:
+            logging.error(
+                'Некорректный url для города: %s',
+                city
+            )
 
     @staticmethod
     def get_forecasting(url: str):

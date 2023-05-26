@@ -14,7 +14,6 @@ CITIES = {
     "BUCHAREST": "https://code.s3.yandex.net/async-module/bucharest-response.json",
     "ROMA": "https://code.s3.yandex.net/async-module/roma-response.json",
     "CAIRO": "https://code.s3.yandex.net/async-module/cairo-response.json",
-
     "GIZA": "https://code.s3.yandex.net/async-module/giza-response.json",
     "MADRID": "https://code.s3.yandex.net/async-module/madrid-response.json",
     "TORONTO": "https://code.s3.yandex.net/async-module/toronto-response.json"
@@ -39,7 +38,11 @@ def check_python_version():
 
 
 def get_url_by_city_name(city_name):
-    try:
+    if city_name in CITIES:
         return CITIES[city_name]
-    except KeyError:
-        raise Exception("Please check that city {} exists".format(city_name))
+
+
+def get_key(value_res):
+    for key, value in CITIES.items():
+        if value_res == value:
+            return key
