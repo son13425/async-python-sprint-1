@@ -14,4 +14,5 @@ env.bak/
 venv.bak/
 
 .external/results
+external/results/
 application-log.log

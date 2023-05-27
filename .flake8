@@ -1,0 +1,15 @@
+[flake8]
+ignore = E501, E265, F811, PT001, DJ05, D100, D105, D104, W504, W292
+max-line-length = 79
+paths =
+    ./external
+    tasks.py
+    tests.py
+    utils.py
+max-complexity = 10
+exclude =
+   examples
+   venv
+   external/tests_data.py
+   external/results/*.csv
+   forecasting.py

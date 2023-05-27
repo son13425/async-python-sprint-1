@@ -5,12 +5,8 @@
 
 
 from external.client import YandexWeatherAPI
-from tasks import (
-    DataFetchingTask,
-    DataCalculationTask,
-    DataAggregationTask,
-    DataAnalyzingTask,
-)
+from tasks import (DataAggregationTask, DataAnalyzingTask, DataCalculationTask,
+                   DataFetchingTask)
 from utils import CITIES, get_url_by_city_name
 
 

@@ -1,7 +1,8 @@
 import logging
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from multiprocessing import Manager, Process
 from multiprocessing.process import AuthenticationString
+from time import perf_counter
 from typing import Any, List
 
 from external.analyzer import analyze_json
@@ -9,9 +10,7 @@ from external.client import YandexWeatherAPI
 from external.combining import combining_data
 from external.ratinger import rating
 from external.table import creating_field_table, creating_table
-from utils import get_url_by_city_name, CITIES
-from time import perf_counter
-
+from utils import CITIES, get_url_by_city_name
 
 CITIES_LIST = list(CITIES.keys())
 
@@ -50,7 +49,7 @@ class DataCalculationTask(Process):
         city = data['city']
         logging.info('Анализирую данные для города: %s', city)
         data_calc = analyze_json(data)
-        data_calc["city"] = city
+        data_calc['city'] = city
         logging.info('Закончил анализ данных для города: %s', city)
         self.queue.put(data_calc)
         logging.info('Отправлены в очередь данные для города: %s', city)
@@ -89,7 +88,7 @@ class DataAggregationTask(DataCalculationTask):
                 break
             else:
                 item = self.queue.get()
-                city = item["city"]
+                city = item['city']
                 logging.info(
                     'Из очереди получены данные для расчета средних значений '
                     'параметров для города: %s', city
@@ -152,4 +151,4 @@ if __name__ == '__main__':
     logging.info('Формирую итоговую таблицу')
     creating_table(table_field, table_body)
     finish = perf_counter()
-    logging.info(f"Выполнение заняло {finish-start} секунд.")
+    logging.info(f'Выполнение заняло {finish-start} секунд.')

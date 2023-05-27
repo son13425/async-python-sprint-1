@@ -34,7 +34,7 @@ def partition(list_cities: List[tuple], start: int, end: int) -> int:
             return right
 
 
-def rating(cities: List[tuple[dict, tuple[Any]]]) -> None:
+def rating(cities: List[tuple[dict, tuple[Any]]]) -> List[List[Any]]:
     """Формирование рейтинга «благоприятности поездки»"""
     cities_list = []
     table_body = []
@@ -65,10 +65,12 @@ def rating(cities: List[tuple[dict, tuple[Any]]]) -> None:
             rating.append(list_sort[index][2])
     logging.info('Составлен рейтинг «благоприятности поездки»')
     logging.info(
-        'Наиболее благоприятный для поездки город: %s', *rating[0]
+        ('Наиболее благоприятный для поездки город: ' + '{}, ' * len(
+            rating[0]
+        )).format(*rating[0])
     )
     print(
-        ('Наиболее благоприятный для поездки город: ' + '{}' * len(
+        ('Наиболее благоприятный для поездки город: ' + '{}, ' * len(
             rating[0]
         )).format(*rating[0]))
     for data in table_body:

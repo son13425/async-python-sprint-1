@@ -1,27 +1,28 @@
-from typing import Any, List
-from prettytable import PrettyTable
 import logging
+from typing import Any, List
+
+from prettytable import PrettyTable
 
 from .outputs import file_output
 
 
 def creating_field_table(data_item: dict) -> List[Any]:
     """Формирование шапки итоговой таблицы"""
-    logging.info("Формирую шапку итоговой таблицы")
+    logging.info('Формирую шапку итоговой таблицы')
     datas_field = []
     for date in data_item['forecasts']:
         datas_field.append(date['date'])
-    table_row_field = ["Город/День", "", *datas_field, "Среднее", "Рейтинг"]
-    logging.info("Сформирована шапка итоговой таблицы")
+    table_row_field = ['Город/День', '', *datas_field, 'Среднее', 'Рейтинг']
+    logging.info('Сформирована шапка итоговой таблицы')
     return table_row_field
 
 
 def creating_body_table(list_table_body: List[dict]) -> tuple[List[Any]]:
     """Формирование тела итоговой таблицы для одного города"""
     city = list_table_body['city']
-    logging.info("Формирую тело итоговой таблицы для города: %s", city)
-    first_row = [city, "Температура, среднее"]
-    second_row = ["", "Без осадков, часов"]
+    logging.info('Формирую тело итоговой таблицы для города: %s', city)
+    first_row = [city, 'Температура, среднее']
+    second_row = ['', 'Без осадков, часов']
     data_by_day = list_table_body['days']
     for data in data_by_day:
         first_row.append(data['temp_avg'])
