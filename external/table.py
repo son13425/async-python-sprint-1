@@ -17,7 +17,9 @@ def creating_field_table(data_item: dict) -> List[Any]:
     return table_row_field
 
 
-def creating_body_table(list_table_body: List[dict]) -> tuple[List[Any]]:
+def creating_body_table(
+        list_table_body: dict[Any, Any]
+) -> tuple[List[Any], List[Any]]:
     """Формирование тела итоговой таблицы для одного города"""
     city = list_table_body['city']
     logging.info('Формирую тело итоговой таблицы для города: %s', city)
@@ -40,5 +42,6 @@ def creating_table(field: List[Any], body: List[List[Any]]) -> None:
         else:
             table.add_row(body[index], divider=True)
     file_output(table)
-    logging.info('Итоговая таблица выведена в файл')
-    print('Итоговая таблица выведена в файл в папку external/results')
+    logging.info(
+        'Итоговая таблица выведена в файл в папку external/results'
+    )

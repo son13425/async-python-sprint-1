@@ -69,7 +69,7 @@ python3 tasks.py
 Тестировать приложение:
 
 ```
-python3 tests.py
+python3 -m external.tests.test
 ```
 
 ### Автор.

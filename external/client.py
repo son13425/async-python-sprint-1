@@ -15,8 +15,10 @@ class YandexWeatherAPI:
     """
     Base class for requests
     """
+    def __init__(self):
+        super().__init__()
 
-    def __do_req(url: str) -> str:
+    def __do_req(self, url: str) -> str:
         """Base request method"""
         city = get_key(url)
         try:
@@ -44,4 +46,4 @@ class YandexWeatherAPI:
         :param url: url_to_json_data as str
         :return: response data as json
         """
-        return YandexWeatherAPI.__do_req(url)
+        return YandexWeatherAPI().__do_req(url)

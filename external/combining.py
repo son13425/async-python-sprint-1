@@ -1,14 +1,15 @@
 import logging
-from typing import Any, List
+from typing import Any, List, Tuple, Dict
 
 from .table import creating_body_table
 
 
-def combining_data(data: dict) -> tuple[dict, List[Any]]:
+def combining_data(
+        data: dict[Any, Any]
+) -> Tuple[Dict[str, Any], Tuple[List[Any], List[Any]]]:
     """Расчет средних значений за период"""
     if not data:
         logging.warning('Input data is empty...')
-        return ({}, [])
     rows_table = creating_body_table(data)
     data_list = data['days']
     city = data['city']
@@ -36,4 +37,4 @@ def combining_data(data: dict) -> tuple[dict, List[Any]]:
         logging.info(
             'Сформировано тело итоговой таблицы для города: %s', city
         )
-        return (data, rows_table)
+        return data, rows_table

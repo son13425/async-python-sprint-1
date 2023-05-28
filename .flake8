@@ -10,6 +10,6 @@ max-complexity = 10
 exclude =
    examples
    venv
-   external/tests_data.py
+   tests/tests_data.py
    external/results/*.csv
    forecasting.py

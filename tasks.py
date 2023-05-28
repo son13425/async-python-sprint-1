@@ -1,9 +1,10 @@
 import logging
+import os
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from multiprocessing import Manager, Process
 from multiprocessing.process import AuthenticationString
 from time import perf_counter
-from typing import Any, List
+from typing import Any, List, Tuple, Dict
 
 from external.analyzer import analyze_json
 from external.client import YandexWeatherAPI
@@ -20,7 +21,7 @@ class DataFetchingTask:
     def __init__(self):
         super().__init__()
 
-    def parse(self, city: str) -> dict:
+    def parse(self, city: str) -> Dict[Any, Any]:
         logging.info('Начинаю читать данные из url для города: %s', city)
         url_with_data = get_url_by_city_name(city)
         if url_with_data:
@@ -45,7 +46,7 @@ class DataCalculationTask(Process):
         super().__init__()
         self.queue = queue
 
-    def run(self, data: dict) -> dict:
+    def run_calc(self, data: Dict[Any, Any]) -> Dict[Any, Any]:
         city = data['city']
         logging.info('Анализирую данные для города: %s', city)
         data_calc = analyze_json(data)
@@ -57,7 +58,7 @@ class DataCalculationTask(Process):
 
     def __getstate__(self):
         """
-        позволяет запускать подпроцессы без того,
+        Позволяет запускать подпроцессы без того,
         чтобы строка аутентификации вызывала ошибку
         """
         state = self.__dict__.copy()
@@ -79,7 +80,11 @@ class DataAggregationTask(DataCalculationTask):
     Объединение вычисленных данных и расчет
     средних параметров для одного города
     """
-    def run(self, int: int) -> dict:
+    def run_aggr(
+        self, data: Any
+    ) -> Tuple[
+        Dict[str, Any], Tuple[List[Any], List[Any]]
+    ]:
         while True:
             if self.queue.empty():
                 logging.error(
@@ -110,7 +115,10 @@ class DataAnalyzingTask:
     def __init__(self):
         super().__init__()
 
-    def run(self, data: List[tuple[dict, List[Any]]]) -> None:
+    def run(
+        self,
+        data: List[Tuple[Dict[Any, Any], Tuple[List[Any], List[Any]]]]
+    ) -> List[List[Any]]:
         table_body = rating(data)
         return table_body
 
@@ -129,21 +137,25 @@ if __name__ == '__main__':
     logging.info('Создаю пул для парсинга данных для списка городов')
     with ThreadPoolExecutor() as pool:
         func = DataFetchingTask()
-        list_data = list(pool.map(func.parse, CITIES_LIST))
-    list_data = list(filter(lambda city: city is not None, list_data))
-    table_field = creating_field_table(list_data[0])
+        list_data = [x for x in pool.map(
+            func.parse, CITIES_LIST
+        ) if x is not None]
+    if list_data[0]:
+        table_field = creating_field_table(list_data[0])
+    else:
+        logging.error('Данные о погоде по городам не получены')
     logging.info('Завершен парсинг данных для списка городов')
     logging.info(
         'Запускаю мультипроцесс расчета средних значений параметров за период'
     )
     logging.info('Создаю очередь данных')
     queue = Manager().Queue()
-    with ProcessPoolExecutor() as executor:
+    with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
         process_producer = DataCalculationTask(queue)
-        data_by_day = list(executor.map(process_producer.run, list_data))
+        data_by_day = list(executor.map(process_producer.run_calc, list_data))
         n = queue.qsize()
         process_consumer = DataAggregationTask(queue)
-        results_list = list(executor.map(process_consumer.run, range(n)))
+        results_list = list(executor.map(process_consumer.run_aggr, range(n)))
     logging.info(
         'Завершен расчет итоговых средних параметров для списка городов'
     )

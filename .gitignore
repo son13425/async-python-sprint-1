@@ -16,3 +16,6 @@ venv.bak/
 .external/results
 external/results/
 application-log.log
+
+.vscode/
+.mypy_cache/

@@ -1,8 +1,12 @@
 import logging
-from typing import Any, List
+from typing import Any, List, Dict, Tuple
 
 
-def quicksort(list_cities: List[tuple], start: int, end: int) -> List[tuple]:
+def quicksort(
+    list_cities: List[Tuple[Any, ...]],
+    start: int,
+    end: int
+) -> List[Tuple[Any, ...]]:
     """Быстрая сортировка списка городов"""
     if end - start > 1:
         pivot = partition(list_cities, start, end)
@@ -11,7 +15,11 @@ def quicksort(list_cities: List[tuple], start: int, end: int) -> List[tuple]:
     return list_cities
 
 
-def partition(list_cities: List[tuple], start: int, end: int) -> int:
+def partition(
+    list_cities: List[Tuple[Any, ...]],
+    start: int,
+    end: int
+) -> int:
     """Расчет значения pivot для быстрой сортировки городов"""
     pivot = list_cities[start]
     left = start + 1
@@ -34,7 +42,9 @@ def partition(list_cities: List[tuple], start: int, end: int) -> int:
             return right
 
 
-def rating(cities: List[tuple[dict, tuple[Any]]]) -> List[List[Any]]:
+def rating(
+    cities: List[Tuple[Dict[Any, Any], Tuple[List[Any], List[Any]]]]
+) -> List[List[Any]]:
     """Формирование рейтинга «благоприятности поездки»"""
     cities_list = []
     table_body = []
@@ -44,12 +54,13 @@ def rating(cities: List[tuple[dict, tuple[Any]]]) -> List[List[Any]]:
         table_body.append(city[1][1])
     start = 0
     end = len(cities_list)
-    list_cities = []
-    for city in cities_list:
-        temp_avg = city['temp_avg']
-        cond_avg = city['cond_avg']
-        city_name = city['city']
-        list_cities.append((-temp_avg, -cond_avg, city_name))
+    list_cities: List[Tuple[Any, ...]] = []
+    for data in cities_list:
+        temp_avg = data['temp_avg']
+        cond_avg = data['cond_avg']
+        city_name = data['city']
+        city_tuple = ((-temp_avg), -cond_avg, city_name)
+        list_cities.append(city_tuple)
     logging.info('Выполняю сортировку списка городов')
     list_sort = quicksort(list_cities, start, end)
     logging.info('Закончил сортировку списка городов')
@@ -73,9 +84,9 @@ def rating(cities: List[tuple[dict, tuple[Any]]]) -> List[List[Any]]:
         ('Наиболее благоприятный для поездки город: ' + '{}, ' * len(
             rating[0]
         )).format(*rating[0]))
-    for data in table_body:
-        if data[0] in rating[0]:
-            data.append(1)
-        if data[0] in rating[1::]:
-            data.append(rating.index(data[0]) + 1)
+    for item in table_body:
+        if item[0] in rating[0]:
+            item.append(1)
+        if item[0] in rating[1::]:
+            item.append(rating.index(item[0]) + 1)
     return table_body

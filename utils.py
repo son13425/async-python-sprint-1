@@ -5,14 +5,30 @@ CITIES = {
     'BERLIN': 'https://code.s3.yandex.net/async-module/berlin-response.json',
     'BEIJING': 'https://code.s3.yandex.net/async-module/beijing-response.json',
     'KAZAN': 'https://code.s3.yandex.net/async-module/kazan-response.json',
-    'SPETERSBURG': 'https://code.s3.yandex.net/async-module/spetersburg-response.json',
-    'VOLGOGRAD': 'https://code.s3.yandex.net/async-module/volgograd-response.json',
-    'NOVOSIBIRSK': 'https://code.s3.yandex.net/async-module/novosibirsk-response.json',
-    'KALININGRAD': 'https://code.s3.yandex.net/async-module/kaliningrad-response.json',
-    'ABUDHABI': 'https://code.s3.yandex.net/async-module/abudhabi-response.json',
-    'ABUDHABI-2': 'https://code.s3.yandex.net/async-module/abudhabi-response.json',
-    'WARSZAWA': 'https://code.s3.yandex.net/async-module/warszawa-response.json',
-    'BUCHAREST': 'https://code.s3.yandex.net/async-module/bucharest-response.json',
+    'SPETERSBURG': (
+        'https://code.s3.yandex.net/async-module/spetersburg-response.json'
+    ),
+    'VOLGOGRAD': (
+        'https://code.s3.yandex.net/async-module/volgograd-response.json'
+    ),
+    'NOVOSIBIRSK': (
+        'https://code.s3.yandex.net/async-module/novosibirsk-response.json'
+    ),
+    'KALININGRAD': (
+        'https://code.s3.yandex.net/async-module/kaliningrad-response.json'
+    ),
+    'ABUDHABI': (
+        'https://code.s3.yandex.net/async-module/abudhabi-response.json'
+    ),
+    'ABUDHABI-2': (
+        'https://code.s3.yandex.net/async-module/abudhabi-response.json'
+    ),
+    'WARSZAWA': (
+        'https://code.s3.yandex.net/async-module/warszawa-response.json'
+    ),
+    'BUCHAREST': (
+        'https://code.s3.yandex.net/async-module/bucharest-response.json'
+    ),
     'ROMA': 'https://code.s3.yandex.net/async-module/roma-response.json',
     'CAIRO': 'https://code.s3.yandex.net/async-module/cairo-response.json',
     'GIZA': 'https://code.s3.yandex.net/async-module/giza-response.json',
@@ -27,11 +43,9 @@ MIN_MINOR_PYTHON_VER = 9
 def check_python_version():
     """Проверяет используемую версию пайтона"""
     import sys
-
-    if (
-        sys.version_info.major < MIN_MAJOR_PYTHON_VER or
-        sys.version_info.minor < MIN_MINOR_PYTHON_VER
-    ):
+    major = sys.version_info.major
+    minor = sys.version_info.minor
+    if (major < MIN_MAJOR_PYTHON_VER or minor < MIN_MINOR_PYTHON_VER):
         raise Exception(
             'Please use python version >= {}.{}'.format(
                 MIN_MAJOR_PYTHON_VER, MIN_MINOR_PYTHON_VER
@@ -47,6 +61,7 @@ def get_url_by_city_name(city_name: str) -> str:
 
 def get_key(value_res: str) -> str:
     """Возвращает ключ словаря CITIES по значению"""
-    for key, value in CITIES.items():
-        if value_res == value:
-            return key
+    if value_res in CITIES.values():
+        for key, value in CITIES.items():
+            if value_res == value:
+                return key

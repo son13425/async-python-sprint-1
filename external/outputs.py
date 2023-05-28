@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).parent
 DATETIME_FORMAT = '%Y-%m-%d_%H-%M-%S'
 
 
-def file_output(table) -> None:
+def file_output(table: object) -> None:
     """Вывод файла в формате csv"""
     results_dir = BASE_DIR / 'results'
     results_dir.mkdir(exist_ok=True)

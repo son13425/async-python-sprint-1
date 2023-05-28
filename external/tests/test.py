@@ -1,15 +1,15 @@
 import unittest
 from multiprocessing import Manager
 
-from external.client import YandexWeatherAPI
-from external.combining import combining_data
-from external.ratinger import partition, quicksort, rating
-from external.table import creating_body_table, creating_field_table
-from external.tests_data import (analiz_data, avg_data, avg_data_list,
-                                 data_sort, list_sort, list_sort_for_sort,
-                                 start_data, table_body, table_body_first,
-                                 table_body_itog, table_body_rating,
-                                 table_field)
+from ..client import YandexWeatherAPI
+from ..combining import combining_data
+from ..ratinger import partition, quicksort, rating
+from ..table import creating_body_table, creating_field_table
+from .tests_data import (analiz_data, avg_data, avg_data_list,
+                         data_sort, list_sort, list_sort_for_sort,
+                         start_data, table_body, table_body_first,
+                         table_body_itog, table_body_rating,
+                         table_field, data_start)
 from tasks import (DataAggregationTask, DataAnalyzingTask, DataCalculationTask,
                    DataFetchingTask)
 from utils import get_key, get_url_by_city_name
@@ -47,18 +47,18 @@ class MyTest(unittest.TestCase):
     def test_class_for_queue(self):
         queue = Manager().Queue()
         self.assertEqual(
-            DataCalculationTask(queue).run(start_data),
+            DataCalculationTask(queue).run_calc(start_data),
             analiz_data
         )
         self.assertEqual(
-            DataAggregationTask(queue).run(1),
+            DataAggregationTask(queue).run_aggr(1),
             avg_data
         )
 
     def test_with_error_for_queue_put(self):
         queue = Manager().Queue()
         self.assertEqual(
-            DataCalculationTask(queue).run(start_data),
+            DataCalculationTask(queue).run_calc(start_data),
             avg_data,
             msg='Данные не соответствуют ожиданию'
         )
@@ -66,11 +66,11 @@ class MyTest(unittest.TestCase):
     def test_with_error_for_queue_get(self):
         queue = Manager().Queue()
         self.assertEqual(
-            DataCalculationTask(queue).run(start_data),
+            DataCalculationTask(queue).run_calc(start_data),
             analiz_data
         )
         self.assertEqual(
-            DataAggregationTask(queue).run(analiz_data),
+            DataAggregationTask(queue).run_aggr(analiz_data),
             table_body,
             msg='Данные не соответствуют ожиданию'
         )
@@ -201,7 +201,7 @@ class MyTest(unittest.TestCase):
             YandexWeatherAPI().get_forecasting(
                 'https://code.s3.yandex.net/async-module/moscow-response.json'
             ),
-            start_data
+            data_start
         )
 
     def test_with_error_get_forecasting(self):
