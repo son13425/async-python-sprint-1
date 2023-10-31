@@ -65,3 +65,20 @@ def get_key(value_res: str) -> str:
         for key, value in CITIES.items():
             if value_res == value:
                 return key
+
+
+def gluing_two_numbers_hex_format(junior, senior):
+    """Склеивание двух чисел в формате hex в python"""
+    result = int(junior, 16)
+    result += int(senior, 16) << 16
+    number_hex = int(hex(result), 0)
+    return number_hex
+
+# def main():
+#     shift=16
+#     result=0x614E
+#     print(type(result))
+#     result += 0x00BC << shift
+#     print(hex(result))
+#     print(int.from_bytes(b'\x00\xbc\x61\x4e', 'big'))
+#     print(int(hex(result), 0))
